@@ -13,7 +13,7 @@ connect_viewer_token(
   api_key = Sys.getenv("CONNECT_API_KEY")
 )
 
-has_viewer_token(session, ..., call = current_env())
+has_viewer_token(session, ...)
 }
 \arguments{
 \item{session}{A Shiny session object.}
@@ -32,10 +32,6 @@ the \code{CONNECT_API_KEY} environment variable, which is set automatically when
 running on Connect.}
 
 \item{...}{Further arguments passed on to \code{\link[=connect_viewer_token]{connect_viewer_token()}}.}
-
-\item{call}{The execution environment of the function to mention in error
-messages. This can be set to \code{\link[rlang:stack]{rlang::caller_env()}} to create friendlier
-error messages when \code{\link[=has_viewer_token]{has_viewer_token()}} is an implementation detail.}
 }
 \value{
 \code{\link[=connect_viewer_token]{connect_viewer_token()}} returns an \link[httr2:oauth_token]{httr2::oauth_token}.

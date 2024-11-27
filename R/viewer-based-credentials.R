@@ -16,35 +16,29 @@
 #' @param api_key An API key for the Connect server. Defaults to the value of
 #'   the `CONNECT_API_KEY` environment variable, which is set automatically when
 #'   running on Connect.
-#' @param call The execution environment of the function to mention in error
-#'   messages. This can be set to [rlang::caller_env()] to create friendlier
-#'   error messages when [connect_viewer_token()] or [has_viewer_token()] is an
-#'   implementation detail.
 #' @returns [connect_viewer_token()] returns an [httr2::oauth_token].
 #' @export
 connect_viewer_token <- function(session,
                                  resource = NULL,
                                  scope = NULL,
                                  server_url = Sys.getenv("CONNECT_SERVER"),
-                                 api_key = Sys.getenv("CONNECT_API_KEY"),
-                                 call = current_env()) {
-  check_shiny_session(session, arg = substitute(session), call = call)
-  check_string(resource, allow_null = TRUE, call = call)
-  check_string(scope, allow_null = TRUE, call = call)
-  check_string(server_url, call = call)
-  check_string(api_key, call = call)
+                                 api_key = Sys.getenv("CONNECT_API_KEY")) {
+  check_shiny_session(session, arg = substitute(session))
+  check_string(resource, allow_null = TRUE)
+  check_string(scope, allow_null = TRUE)
+  check_string(server_url)
+  check_string(api_key)
 
   # Older versions or certain configurations of Connect might not supply a user
   # session token.
   session_token <- session$request$HTTP_POSIT_CONNECT_USER_SESSION_TOKEN
   if (is.null(session_token)) {
     cli::cli_abort(
-      "Viewer-based credentials are not supported by this version of Connect.",
-      call = call
+      "Viewer-based credentials are not supported by this version of Connect."
     )
   }
 
-  client <- connect_oauth_client(server_url, api_key, call = call)
+  client <- connect_oauth_client(server_url, api_key, call = current_env())
   token <- oauth_token_cached(
     client,
     oauth_flow_token_exchange,
@@ -67,11 +61,11 @@ connect_viewer_token <- function(session,
 #'   token and `FALSE` otherwise.
 #' @export
 #' @rdname connect_viewer_token
-has_viewer_token <- function(session, ..., call = current_env()) {
+has_viewer_token <- function(session, ...) {
   # Capture the name of the argument in the parent context, for better error
   # reporting.
   arg <- substitute(session)
-  check_shiny_session(session, allow_null = TRUE, arg = arg, call = call)
+  check_shiny_session(session, allow_null = TRUE, arg = arg)
   if (is.null(session)) {
     return(FALSE)
   }
@@ -88,12 +82,11 @@ has_viewer_token <- function(session, ..., call = current_env()) {
   # If viewer-based authentication is enabled, check whether we can actually get
   # credentials before continuing. Better to fail early.
   try_fetch(
-    connect_viewer_token(session, ..., call = call),
+    connect_viewer_token(session, ...),
     error = function(cnd) {
       cli::cli_abort(
         "Cannot fetch viewer-based credentials for the current Shiny session.",
-        parent = cnd,
-        call = call
+        parent = cnd
       )
     }
   )
