@@ -1,0 +1,163 @@
+#' Viewer-based credentials on Posit Connect
+#'
+#' Request an OAuth access token for a third-party resource belonging to the
+#' user associated with a given Shiny session. This works by exchanging a
+#' short-lived session credential for OAuth tokens issued to the client managed
+#' by the Connect server, without the Shiny app in question having to manage the
+#' user's authentication flow (or the associated client credentials) itself.
+#'
+#' `connect_viewer_token()` handles caching automatically.
+#'
+#' @inheritParams httr2::oauth_flow_token_exchange
+#' @param session A Shiny session object.
+#' @param server_url The Connect server to exchange credentials with. Defaults
+#'   to the value of the `CONNECT_SERVER` environment variable, which is set
+#'   automatically when running on Connect.
+#' @param api_key An API key for the Connect server. Defaults to the value of
+#'   the `CONNECT_API_KEY` environment variable, which is set automatically when
+#'   running on Connect.
+#' @param call The execution environment of the function to mention in error
+#'   messages. This can be set to [rlang::caller_env()] to create friendlier
+#'   error messages when [connect_viewer_token()] or [has_viewer_token()] is an
+#'   implementation detail.
+#' @returns [connect_viewer_token()] returns an [httr2::oauth_token].
+#' @export
+connect_viewer_token <- function(session,
+                                 resource = NULL,
+                                 scope = NULL,
+                                 server_url = Sys.getenv("CONNECT_SERVER"),
+                                 api_key = Sys.getenv("CONNECT_API_KEY"),
+                                 call = current_env()) {
+  check_shiny_session(session, arg = substitute(session), call = call)
+  check_string(resource, allow_null = TRUE, call = call)
+  check_string(scope, allow_null = TRUE, call = call)
+  check_string(server_url, call = call)
+  check_string(api_key, call = call)
+
+  # Older versions or certain configurations of Connect might not supply a user
+  # session token.
+  session_token <- session$request$HTTP_POSIT_CONNECT_USER_SESSION_TOKEN
+  if (is.null(session_token)) {
+    cli::cli_abort(
+      "Viewer-based credentials are not supported by this version of Connect.",
+      call = call
+    )
+  }
+
+  client <- connect_oauth_client(server_url, api_key, call = call)
+  token <- oauth_token_cached(
+    client,
+    oauth_flow_token_exchange,
+    flow_params = list(
+      subject_token = session_token,
+      subject_token_type = "urn:posit:connect:user-session-token",
+      resource = resource,
+      scope = scope
+    ),
+    # Important: we need to keep a separate cache for each session.
+    cache_key = session_token,
+    # Don't use the cached token when testing.
+    reauth = is_testing()
+  )
+  token$access_token
+}
+
+#' @param ... Further arguments passed on to [connect_viewer_token()].
+#' @returns [has_viewer_token()] returns `TRUE` if the session has a viewer
+#'   token and `FALSE` otherwise.
+#' @export
+#' @rdname connect_viewer_token
+has_viewer_token <- function(session, ..., call = current_env()) {
+  # Capture the name of the argument in the parent context, for better error
+  # reporting.
+  arg <- substitute(session)
+  check_shiny_session(session, allow_null = TRUE, arg = arg, call = call)
+  if (is.null(session)) {
+    return(FALSE)
+  }
+
+  if (!running_on_connect()) {
+    # TODO: How often should we show this warning?
+    cli::cli_inform(c(
+      "!" = "Ignoring the {.arg {arg}} parameter.",
+      "i" = "Viewer-based credentials are only available when running on Connect."
+    ))
+    return(FALSE)
+  }
+
+  # If viewer-based authentication is enabled, check whether we can actually get
+  # credentials before continuing. Better to fail early.
+  try_fetch(
+    connect_viewer_token(session, ..., call = call),
+    error = function(cnd) {
+      cli::cli_abort(
+        "Cannot fetch viewer-based credentials for the current Shiny session.",
+        parent = cnd,
+        call = call
+      )
+    }
+  )
+
+  TRUE
+}
+
+connect_oauth_client <- function(server_url = Sys.getenv("CONNECT_SERVER"),
+                                 api_key = Sys.getenv("CONNECT_API_KEY"),
+                                 call = current_env()) {
+  if (!nzchar(server_url)) {
+    cli::cli_abort(c(
+      "A Connect server URL is required to retrieve credentials.",
+      "i" = "Pass an explicit {.arg server_url} argument or set the
+             {.envvar CONNECT_SERVER} environment variable."
+    ), call = call)
+  }
+  if (!nzchar(api_key)) {
+    cli::cli_abort(c(
+      "A valid Connect API key is required to retrieve credentials.",
+      "i" = "Pass an explicit {.arg api_key} argument or set the
+             {.envvar CONNECT_API_KEY} environment variable."
+    ), call = call)
+  }
+  server_url <- sub("/$", "", server_url)
+  oauth_client(
+    "posit-connect",
+    token_url = paste0(
+      server_url, "/__api__/v1/oauth/integrations/credentials"
+    ),
+    auth = oauth_client_req_auth_connect,
+    auth_params = list(api_key = api_key)
+  )
+}
+
+# Custom client authentication function for Connect.
+oauth_client_req_auth_connect <- function(req, client, api_key) {
+  req_headers(
+    req,
+    Authorization = paste("Key", api_key),
+    .redact = "Authorization"
+  )
+}
+
+check_shiny_session <- function(x,
+                                allow_null = FALSE,
+                                arg = caller_arg(x),
+                                call = caller_env()) {
+  if (!missing(x) && inherits(x, "ShinySession")) {
+    return(invisible(x))
+  }
+  stop_input_type(
+    x,
+    "a Shiny session object",
+    allow_null = allow_null,
+    arg = as_string(arg),
+    call = call
+  )
+}
+
+running_on_connect <- function() {
+  identical(Sys.getenv("RSTUDIO_PRODUCT"), "CONNECT")
+}
+
+is_testing <- function() {
+  identical(Sys.getenv("TESTTHAT"), "true")
+}
