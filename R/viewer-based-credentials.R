@@ -71,9 +71,8 @@ has_viewer_token <- function(session, ...) {
   }
 
   if (!running_on_connect()) {
-    # TODO: How often should we show this warning?
-    cli::cli_inform(c(
-      "!" = "Ignoring the {.arg {arg}} parameter.",
+    debug_inform(c(
+      "No viewer-based credentials found.",
       "i" = "Viewer-based credentials are only available when running on Connect."
     ))
     return(FALSE)
@@ -81,17 +80,13 @@ has_viewer_token <- function(session, ...) {
 
   # If viewer-based authentication is enabled, check whether we can actually get
   # credentials before continuing. Better to fail early.
-  try_fetch(
-    connect_viewer_token(session, ...),
-    error = function(cnd) {
-      cli::cli_abort(
-        "Cannot fetch viewer-based credentials for the current Shiny session.",
-        parent = cnd
-      )
-    }
-  )
-
-  TRUE
+  try_fetch({
+    connect_viewer_token(session, ...)
+    TRUE
+  }, error = function(cnd) {
+    debug_inform("No viewer-based credentials found.", parent = cnd)
+    FALSE
+  })
 }
 
 connect_oauth_client <- function(server_url = Sys.getenv("CONNECT_SERVER"),
@@ -153,4 +148,11 @@ running_on_connect <- function() {
 
 is_testing <- function() {
   identical(Sys.getenv("TESTTHAT"), "true")
+}
+
+debug_inform <- function(..., .envir = caller_env()) {
+  if (!getOption("connectcreds_debug", FALSE)) {
+    return()
+  }
+  cli::cli_inform(..., .envir = .envir)
 }

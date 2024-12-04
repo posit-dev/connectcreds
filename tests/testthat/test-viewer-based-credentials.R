@@ -1,13 +1,18 @@
 test_that("the session parameter is ignored when not on Connect", {
   session <- structure(list(request = list()), class = "ShinySession")
-  expect_snapshot(. <- has_viewer_token(session))
+  expect_snapshot(has_viewer_token(session))
+  local_options(connectcreds_debug = TRUE)
+  expect_snapshot(has_viewer_token(session))
 })
 
 test_that("missing viewer credentials generate errors on Connect", {
   # Mock a Connect environment that *does not* support viewer-based credentials.
   local_mocked_bindings(running_on_connect = function() TRUE)
   session <- structure(list(request = list()), class = "ShinySession")
-  expect_snapshot(. <- has_viewer_token(session), error = TRUE)
+  expect_snapshot(has_viewer_token(session))
+  expect_snapshot(connect_viewer_token(session), error = TRUE)
+  local_options(connectcreds_debug = TRUE)
+  expect_snapshot(has_viewer_token(session))
 })
 
 test_that("token exchange requests to Connect look correct", {
