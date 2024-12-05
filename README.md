@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![R-CMD-check](https://github.com/posit-dev/connectcreds/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/posit-dev/connectcreds/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `connectcreds` provides low-level utilities for Shiny developers and R
