@@ -39,21 +39,28 @@ connect_viewer_token <- function(session,
   }
 
   client <- connect_oauth_client(server_url, api_key, call = current_env())
-  token <- oauth_token_cached(
-    client,
-    oauth_flow_token_exchange,
-    flow_params = list(
-      subject_token = session_token,
-      subject_token_type = "urn:posit:connect:user-session-token",
-      resource = resource,
-      scope = scope
+  try_fetch(
+    oauth_token_cached(
+      client,
+      oauth_flow_token_exchange,
+      flow_params = list(
+        subject_token = session_token,
+        subject_token_type = "urn:posit:connect:user-session-token",
+        resource = resource,
+        scope = scope
+      ),
+      # Important: we need to keep a separate cache for each session.
+      cache_key = session_token,
+      # Don't use the cached token when testing.
+      reauth = is_testing()
     ),
-    # Important: we need to keep a separate cache for each session.
-    cache_key = session_token,
-    # Don't use the cached token when testing.
-    reauth = is_testing()
+    error = function(cnd) {
+      cli::cli_abort(
+        "Cannot fetch viewer-based credentials for the current Shiny session.",
+        parent = cnd
+      )
+    }
   )
-  token
 }
 
 #' @param ... Further arguments passed on to [connect_viewer_token()].
