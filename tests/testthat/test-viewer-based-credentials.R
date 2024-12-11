@@ -16,22 +16,34 @@ test_that("missing viewer credentials generate errors on Connect", {
 })
 
 test_that("token exchange requests to Connect look correct", {
-  # Mock a Connect environment that supports viewer-based credentials.
-  withr::local_envvar(
-    RSTUDIO_PRODUCT = "CONNECT",
-    CONNECT_SERVER = "localhost:3030",
-    CONNECT_API_KEY = "key"
-  )
-  local_mocked_responses(function(req) {
+  local_mocked_connect_responses(function(req) {
     # Snapshot relevant fields of the outgoing request.
     expect_snapshot(
       list(url = req$url, headers = req$headers, body = req$body$data)
     )
     response_json(body = list(access_token = "token"))
   })
-  session <- structure(
-    list(request = list(HTTP_POSIT_CONNECT_USER_SESSION_TOKEN = "user-token")),
-    class = "ShinySession"
-  )
+  session <- example_connect_session()
   expect_equal(connect_viewer_token(session)$access_token, "token")
+})
+
+test_that("mock Connect responses work as expected", {
+  session <- example_connect_session()
+
+  with_mocked_connect_responses(
+    expect_equal(connect_viewer_token(session)$access_token, "test"),
+    token = "test"
+  )
+
+  with_mocked_connect_responses(
+    expect_snapshot(connect_viewer_token(session), error = TRUE),
+    error = TRUE
+  )
+
+  with_mocked_connect_responses(
+    expect_snapshot(connect_viewer_token(session), error = TRUE),
+    mock = function(req) {
+      response(status_code = 500, headers = list(`content-type` = "text/plain"))
+    }
+  )
 })

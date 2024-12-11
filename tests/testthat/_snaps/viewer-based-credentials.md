@@ -71,3 +71,27 @@
       
       
 
+# mock Connect responses work as expected
+
+    Code
+      connect_viewer_token(session)
+    Condition
+      Error in `connect_viewer_token()`:
+      ! Cannot fetch viewer-based credentials for the current Shiny session.
+      Caused by error:
+      ! Failed to parse response from `client$token_url` OAuth url.
+      * Did not contain `access_token`, `device_code`, or `error` field.
+
+---
+
+    Code
+      connect_viewer_token(session)
+    Condition
+      Error in `connect_viewer_token()`:
+      ! Cannot fetch viewer-based credentials for the current Shiny session.
+      Caused by error:
+      ! Failed to parse response from `client$token_url` OAuth url.
+      Caused by error in `resp_body_json()`:
+      ! Unexpected content type "text/plain".
+      * Expecting type "application/json" or suffix "json".
+
