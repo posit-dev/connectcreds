@@ -53,7 +53,7 @@ connect_viewer_token <- function(session,
     # Don't use the cached token when testing.
     reauth = is_testing()
   )
-  token$access_token
+  token
 }
 
 #' @param ... Further arguments passed on to [connect_viewer_token()].

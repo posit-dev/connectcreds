@@ -33,5 +33,5 @@ test_that("token exchange requests to Connect look correct", {
     list(request = list(HTTP_POSIT_CONNECT_USER_SESSION_TOKEN = "user-token")),
     class = "ShinySession"
   )
-  expect_equal(connect_viewer_token(session), "token")
+  expect_equal(connect_viewer_token(session)$access_token, "token")
 })
