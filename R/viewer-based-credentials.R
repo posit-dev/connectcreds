@@ -54,6 +54,23 @@ connect_viewer_token <- function(session,
       # Don't use the cached token when testing.
       reauth = is_testing()
     ),
+    httr2_oauth_parse = function(cnd) {
+      # The original implementation of viewer-based credentials returned a
+      # regular Connect error response, which httr2 doesn't understand. Try to
+      # turn it into a useful message in that case.
+      body <- try(resp_body_json(cnd$resp), TRUE)
+      if (inherits(body, "try-error") || !has_name(body, "error_message")) {
+        # Re-throw errors we don't expect.
+        stop(cnd)
+      }
+      # Emulate httr2:::oauth_flow_abort().
+      cli::cli_abort(c(
+          "OAuth failure [invalid_request]",
+          "*" = body$error_message,
+          i = if (body$error_code == 212) "Learn more at \
+          {.url https://docs.posit.co/connect/user/oauth-integrations/#adding-oauth-integrations-to-deployed-content}."
+      ), call = NULL)
+    },
     error = function(cnd) {
       cli::cli_abort(
         "Cannot fetch viewer-based credentials for the current Shiny session.",
