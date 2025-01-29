@@ -8,7 +8,7 @@ Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Imports:
     cli,
-    httr2 (>= 1.0.7),
+    httr2 (>= 1.1.0),
     rlang (>= 1.1.0)
 Suggests:
     testthat (>= 3.0.0),

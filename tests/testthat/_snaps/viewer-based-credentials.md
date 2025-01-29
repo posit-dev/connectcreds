@@ -79,8 +79,9 @@
       Error in `connect_viewer_token()`:
       ! Cannot fetch viewer-based credentials for the current Shiny session.
       Caused by error:
-      ! Failed to parse response from `client$token_url` OAuth url.
-      * Did not contain `access_token`, `device_code`, or `error` field.
+      ! OAuth failure [invalid_request]
+      * No OAuth integrations have been associated with this content item.
+      i Learn more at <https://docs.posit.co/connect/user/oauth-integrations/#adding-oauth-integrations-to-deployed-content>.
 
 ---
 
