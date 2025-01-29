@@ -3,7 +3,6 @@
 \name{with_mocked_connect_responses}
 \alias{with_mocked_connect_responses}
 \alias{local_mocked_connect_responses}
-\alias{example_connect_session}
 \title{Mock responses from the Posit Connect server}
 \usage{
 with_mocked_connect_responses(
@@ -20,8 +19,6 @@ local_mocked_connect_responses(
   error = FALSE,
   env = caller_env()
 )
-
-example_connect_session()
 }
 \arguments{
 \item{code}{Code to execute in the temporary environment.}
@@ -49,7 +46,7 @@ viewer-based credentials.
 }
 \examples{
 with_mocked_connect_responses(
-  connect_viewer_token(example_connect_session()),
+  connect_viewer_token(),
   token = "test"
 )
 }

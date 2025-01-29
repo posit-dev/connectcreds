@@ -9,7 +9,7 @@
 #' @inheritParams httr2::with_mocked_responses
 #' @examples
 #' with_mocked_connect_responses(
-#'   connect_viewer_token(example_connect_session()),
+#'   connect_viewer_token(),
 #'   token = "test"
 #' )
 #' @export
@@ -23,6 +23,7 @@ with_mocked_connect_responses <- function(code, mock = NULL, token = NULL, error
       RSTUDIO_PRODUCT = "CONNECT",
       CONNECT_SERVER = "localhost:3030",
       CONNECT_API_KEY = "key",
+      CONNECTCREDS_MOCKING = "1",
       .local_envir = env
     ),
     with_mocked_responses(mock, code)
@@ -41,6 +42,7 @@ local_mocked_connect_responses <- function(mock = NULL, token = NULL, error = FA
     RSTUDIO_PRODUCT = "CONNECT",
     CONNECT_SERVER = "localhost:3030",
     CONNECT_API_KEY = "key",
+    CONNECTCREDS_MOCKING = "1",
     .local_envir = env
   )
   local_mocked_responses(mock, env = env)
@@ -72,11 +74,13 @@ connect_mock_fn <- function(token = NULL, error = FALSE) {
   }
 }
 
-#' @rdname with_mocked_connect_responses
-#' @export
-example_connect_session <- function() {
+mock_connect_session <- function() {
   structure(
     list(request = list(HTTP_POSIT_CONNECT_USER_SESSION_TOKEN = "user-token")),
     class = "ShinySession"
   )
+}
+
+is_mocking <- function() {
+  identical(Sys.getenv("CONNECTCREDS_MOCKING"), "1")
 }

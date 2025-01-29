@@ -9,7 +9,9 @@
 #' `connect_viewer_token()` handles caching automatically.
 #'
 #' @inheritParams httr2::oauth_flow_token_exchange
-#' @param session A Shiny session object.
+#' @param session A Shiny session object. By default, this grabs the Shiny
+#'   session of the parent environment (if any), provided we are also running on
+#'   Connect.
 #' @param server_url The Connect server to exchange credentials with. Defaults
 #'   to the value of the `CONNECT_SERVER` environment variable, which is set
 #'   automatically when running on Connect.
@@ -18,11 +20,13 @@
 #'   running on Connect.
 #' @returns [connect_viewer_token()] returns an [httr2::oauth_token].
 #' @export
-connect_viewer_token <- function(session,
-                                 resource = NULL,
-                                 scope = NULL,
-                                 server_url = Sys.getenv("CONNECT_SERVER"),
-                                 api_key = Sys.getenv("CONNECT_API_KEY")) {
+connect_viewer_token <- function(
+  resource = NULL,
+  scope = NULL,
+  session = get_connect_session(),
+  server_url = Sys.getenv("CONNECT_SERVER"),
+  api_key = Sys.getenv("CONNECT_API_KEY")
+) {
   check_shiny_session(session, arg = substitute(session))
   check_string(resource, allow_null = TRUE)
   check_string(scope, allow_null = TRUE)
@@ -85,11 +89,7 @@ connect_viewer_token <- function(session,
 #'   token and `FALSE` otherwise.
 #' @export
 #' @rdname connect_viewer_token
-has_viewer_token <- function(session, ...) {
-  # Capture the name of the argument in the parent context, for better error
-  # reporting.
-  arg <- substitute(session)
-  check_shiny_session(session, allow_null = TRUE, arg = arg)
+has_viewer_token <- function(..., session = get_connect_session()) {
   if (is.null(session)) {
     return(FALSE)
   }
@@ -105,7 +105,7 @@ has_viewer_token <- function(session, ...) {
   # If viewer-based authentication is enabled, check whether we can actually get
   # credentials before continuing. Better to fail early.
   try_fetch({
-    connect_viewer_token(session, ...)
+    connect_viewer_token(..., session = session)
     TRUE
   }, error = function(cnd) {
     debug_inform("No viewer-based credentials found.", parent = cnd)
@@ -179,4 +179,24 @@ debug_inform <- function(..., .envir = caller_env()) {
     return()
   }
   cli::cli_inform(..., .envir = .envir)
+}
+
+#' Return the current Shiny session object if we're on Posit Connect.
+#' @noRd
+get_connect_session <- function() {
+  if (!running_on_connect()) {
+    return(NULL)
+  }
+  if (is_mocking()) {
+    # This allows with_mocked_connect_response() et al. to work seamlessly in
+    # third-party package tests.
+    return(mock_connect_session())
+  }
+  if (!isNamespaceLoaded("shiny")) {
+    return(NULL)
+  }
+  # Avoid taking a dependency on Shiny, which is otherwise irrelevant to most
+  # packages.
+  f <- utils::getFromNamespace("getDefaultReactiveDomain", "shiny")
+  f()
 }

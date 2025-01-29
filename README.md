@@ -34,8 +34,8 @@ follows:
 ``` r
 server <- function(input, output, session) {
   token <- "PAT for local development"
-  if (connectcreds::has_viewer_token(session)) {
-    token <- connectcreds::connect_viewer_token(session)
+  if (connectcreds::has_viewer_token()) {
+    token <- connectcreds::connect_viewer_token()
   }
 
   # ...
@@ -49,13 +49,11 @@ viewer on Connect but uses a GitHub personal access token when testing
 locally:
 
 ``` r
-gh_token <- function(session = NULL) {
-  if (!is.null(session)) {
-    rlang::check_installed("connectcreds", "for viewer-based authentication")
-    if (connectcreds::has_viewer_token(session, "https://github.com")) {
-      token <- connectcreds::connect_viewer_token(session, "https://github.com")
-      return(token)
-    }
+gh_token <- function() {
+  rlang::check_installed("connectcreds", "for viewer-based authentication")
+  if (connectcreds::has_viewer_token("https://github.com")) {
+    token <- connectcreds::connect_viewer_token("https://github.com")
+    return(token$access_token)
   }
   Sys.getenv("GITHUB_PAT")
 }
@@ -63,7 +61,7 @@ gh_token <- function(session = NULL) {
 server <- function(input, output, session) {
   # A Shiny output that shows the user's GitHub username:
   output$gh_handle <- renderText({
-    resp <- gh::gh_whoami(.token = gh_token(session = session))
+    resp <- gh::gh_whoami(.token = gh_token())
     resp$login
   })
 

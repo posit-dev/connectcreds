@@ -6,22 +6,24 @@
 \title{Viewer-based credentials on Posit Connect}
 \usage{
 connect_viewer_token(
-  session,
   resource = NULL,
   scope = NULL,
+  session = get_connect_session(),
   server_url = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
 )
 
-has_viewer_token(session, ...)
+has_viewer_token(..., session = get_connect_session())
 }
 \arguments{
-\item{session}{A Shiny session object.}
-
 \item{resource}{The URI that identifies the resource that the client is
 trying to access, if applicable.}
 
 \item{scope}{Scopes to be requested from the resource owner.}
+
+\item{session}{A Shiny session object. By default, this grabs the Shiny
+session of the parent environment (if any), provided we are also running on
+Connect.}
 
 \item{server_url}{The Connect server to exchange credentials with. Defaults
 to the value of the \code{CONNECT_SERVER} environment variable, which is set

@@ -1,14 +1,14 @@
-# the session parameter is ignored when not on Connect
+# has_viewer_token() returns false when not on Connect
 
     Code
-      has_viewer_token(session)
+      has_viewer_token(session = session)
     Output
       [1] FALSE
 
 ---
 
     Code
-      has_viewer_token(session)
+      has_viewer_token(session = session)
     Message
       No viewer-based credentials found.
       i Viewer-based credentials are only available when running on Connect.
@@ -18,14 +18,14 @@
 # missing viewer credentials generate errors on Connect
 
     Code
-      has_viewer_token(session)
+      has_viewer_token()
     Output
       [1] FALSE
 
 ---
 
     Code
-      connect_viewer_token(session)
+      connect_viewer_token()
     Condition
       Error in `connect_viewer_token()`:
       ! Viewer-based credentials are not supported by this version of Connect.
@@ -33,7 +33,7 @@
 ---
 
     Code
-      has_viewer_token(session)
+      has_viewer_token()
     Message
       No viewer-based credentials found.
       Caused by error in `connect_viewer_token()`:
@@ -74,7 +74,7 @@
 # mock Connect responses work as expected
 
     Code
-      connect_viewer_token(session)
+      connect_viewer_token()
     Condition
       Error in `connect_viewer_token()`:
       ! Cannot fetch viewer-based credentials for the current Shiny session.
@@ -86,7 +86,7 @@
 ---
 
     Code
-      connect_viewer_token(session)
+      connect_viewer_token()
     Condition
       Error in `connect_viewer_token()`:
       ! Cannot fetch viewer-based credentials for the current Shiny session.
