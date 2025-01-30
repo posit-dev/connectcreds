@@ -16,7 +16,13 @@ credentials](https://docs.posit.co/connect/admin/integrations/oauth-integrations
 
 ## Installation
 
-You can install the development version of `connectcreds` from
+You can install connectcreds from CRAN with:
+
+``` r
+install.packages("connectcreds")
+```
+
+Or, install the development version of connectcreds from
 [GitHub](https://github.com/) with:
 
 ``` r
