@@ -15,7 +15,13 @@
 #'   token = "test"
 #' )
 #' @export
-with_mocked_connect_responses <- function(code, mock = NULL, token = NULL, error = FALSE, env = caller_env()) {
+with_mocked_connect_responses <- function(
+  code,
+  mock = NULL,
+  token = NULL,
+  error = FALSE,
+  env = caller_env()
+) {
   check_string(token, allow_empty = FALSE, allow_null = TRUE)
   check_bool(error)
   check_exclusive(mock, token, error)
@@ -35,7 +41,12 @@ with_mocked_connect_responses <- function(code, mock = NULL, token = NULL, error
 #' @inheritParams httr2::local_mocked_responses
 #' @rdname with_mocked_connect_responses
 #' @export
-local_mocked_connect_responses <- function(mock = NULL, token = NULL, error = FALSE, env = caller_env()) {
+local_mocked_connect_responses <- function(
+  mock = NULL,
+  token = NULL,
+  error = FALSE,
+  env = caller_env()
+) {
   check_string(token, allow_empty = FALSE, allow_null = TRUE)
   check_bool(error)
   check_exclusive(mock, token, error)
@@ -59,7 +70,7 @@ connect_mock_fn <- function(token = NULL, error = FALSE) {
       body <- list(
         access_token = token,
         issued_token_type = "urn:ietf:params:oauth:token-type:access_token",
-        token_type =  "Bearer"
+        token_type = "Bearer"
       )
     } else {
       body <- list(

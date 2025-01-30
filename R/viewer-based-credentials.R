@@ -73,12 +73,16 @@ connect_viewer_token <- function(
         stop(cnd)
       }
       # Emulate httr2:::oauth_flow_abort().
-      cli::cli_abort(c(
+      cli::cli_abort(
+        c(
           "OAuth failure [invalid_request]",
           "*" = body$error_message,
-          i = if (body$error_code == 212) "Learn more at \
+          i = if (body$error_code == 212)
+            "Learn more at \
           {.url https://docs.posit.co/connect/user/oauth-integrations/#adding-oauth-integrations-to-deployed-content}."
-      ), call = NULL)
+        ),
+        call = NULL
+      )
     },
     error = function(cnd) {
       cli::cli_abort(
@@ -100,46 +104,60 @@ has_viewer_token <- function(..., session = get_connect_session()) {
   }
 
   if (!running_on_connect()) {
-    debug_inform(c(
-      "No viewer-based credentials found.",
-      "i" = "Viewer-based credentials are only available when running on Connect."
-    ))
+    debug_inform(
+      c(
+        "No viewer-based credentials found.",
+        "i" = "Viewer-based credentials are only available when running on Connect."
+      )
+    )
     return(FALSE)
   }
 
   # If viewer-based authentication is enabled, check whether we can actually get
   # credentials before continuing. Better to fail early.
-  try_fetch({
-    connect_viewer_token(..., session = session)
-    TRUE
-  }, error = function(cnd) {
-    debug_inform("No viewer-based credentials found.", parent = cnd)
-    FALSE
-  })
+  try_fetch(
+    {
+      connect_viewer_token(..., session = session)
+      TRUE
+    },
+    error = function(cnd) {
+      debug_inform("No viewer-based credentials found.", parent = cnd)
+      FALSE
+    }
+  )
 }
 
-connect_oauth_client <- function(server_url = Sys.getenv("CONNECT_SERVER"),
-                                 api_key = Sys.getenv("CONNECT_API_KEY"),
-                                 call = current_env()) {
+connect_oauth_client <- function(
+  server_url = Sys.getenv("CONNECT_SERVER"),
+  api_key = Sys.getenv("CONNECT_API_KEY"),
+  call = current_env()
+) {
   if (!nzchar(server_url)) {
-    cli::cli_abort(c(
-      "A Connect server URL is required to retrieve credentials.",
-      "i" = "Pass an explicit {.arg server_url} argument or set the
+    cli::cli_abort(
+      c(
+        "A Connect server URL is required to retrieve credentials.",
+        "i" = "Pass an explicit {.arg server_url} argument or set the
              {.envvar CONNECT_SERVER} environment variable."
-    ), call = call)
+      ),
+      call = call
+    )
   }
   if (!nzchar(api_key)) {
-    cli::cli_abort(c(
-      "A valid Connect API key is required to retrieve credentials.",
-      "i" = "Pass an explicit {.arg api_key} argument or set the
+    cli::cli_abort(
+      c(
+        "A valid Connect API key is required to retrieve credentials.",
+        "i" = "Pass an explicit {.arg api_key} argument or set the
              {.envvar CONNECT_API_KEY} environment variable."
-    ), call = call)
+      ),
+      call = call
+    )
   }
   server_url <- sub("/$", "", server_url)
   oauth_client(
     "posit-connect",
     token_url = paste0(
-      server_url, "/__api__/v1/oauth/integrations/credentials"
+      server_url,
+      "/__api__/v1/oauth/integrations/credentials"
     ),
     auth = oauth_client_req_auth_connect,
     auth_params = list(api_key = api_key)
@@ -155,10 +173,12 @@ oauth_client_req_auth_connect <- function(req, client, api_key) {
   )
 }
 
-check_shiny_session <- function(x,
-                                allow_null = FALSE,
-                                arg = caller_arg(x),
-                                call = caller_env()) {
+check_shiny_session <- function(
+  x,
+  allow_null = FALSE,
+  arg = caller_arg(x),
+  call = caller_env()
+) {
   if (!missing(x) && inherits(x, "ShinySession")) {
     return(invisible(x))
   }
