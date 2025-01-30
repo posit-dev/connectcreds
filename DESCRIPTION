@@ -1,10 +1,14 @@
 Package: connectcreds
-Title: What the Package Does (One Line, Title Case)
+Title: Manage 'OAuth' Credentials from 'Posit Connect'
 Version: 0.0.0.9000
-Authors@R:
+Authors@R: c(
     person("Aaron", "Jacobs", , "aaron.jacobs@posit.co",
-           role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+           role = c("aut", "cre")),
+    person("Posit Software, PBC", role = c("cph", "fnd"))
+  )
+Description: A toolkit for making use of credentials mediated by 'Posit
+  Connect'. It handles the details of communicating with Connect's API
+  correctly, 'OAuth' token caching, and refresh behaviour.
 License: MIT + file LICENSE
 Imports:
     cli,

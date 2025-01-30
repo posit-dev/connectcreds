@@ -4,12 +4,17 @@
 \name{connectcreds-package}
 \alias{connectcreds}
 \alias{connectcreds-package}
-\title{connectcreds: What the Package Does (One Line, Title Case)}
+\title{connectcreds: Manage 'OAuth' Credentials from 'Posit Connect'}
 \description{
-What the package does (one paragraph).
+A toolkit for making use of credentials mediated by 'Posit Connect'. It handles the details of communicating with Connect's API correctly, 'OAuth' token caching, and refresh behaviour.
 }
 \author{
 \strong{Maintainer}: Aaron Jacobs \email{aaron.jacobs@posit.co}
+
+Other contributors:
+\itemize{
+  \item Posit Software, PBC [copyright holder, funder]
+}
 
 }
 \keyword{internal}
