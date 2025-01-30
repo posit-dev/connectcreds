@@ -51,3 +51,9 @@ user's authentication flow (or the associated client credentials) itself.
 \details{
 \code{connect_viewer_token()} handles caching automatically.
 }
+\examples{
+token <- "default-token"
+if (has_viewer_token()) {
+  token <- connect_viewer_token()
+}
+}

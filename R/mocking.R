@@ -7,6 +7,8 @@
 #' @param token When not `NULL`, return this token from the Connect server.
 #' @param error When `TRUE`, return an error from the Connect server.
 #' @inheritParams httr2::with_mocked_responses
+#' @returns [with_mocked_connect_responses()] returns the result of evaluating
+#'   `code`.
 #' @examples
 #' with_mocked_connect_responses(
 #'   connect_viewer_token(),

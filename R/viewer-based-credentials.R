@@ -19,6 +19,11 @@
 #'   the `CONNECT_API_KEY` environment variable, which is set automatically when
 #'   running on Connect.
 #' @returns [connect_viewer_token()] returns an [httr2::oauth_token].
+#' @examples
+#' token <- "default-token"
+#' if (has_viewer_token()) {
+#'   token <- connect_viewer_token()
+#' }
 #' @export
 connect_viewer_token <- function(
   resource = NULL,

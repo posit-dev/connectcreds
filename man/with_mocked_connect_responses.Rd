@@ -39,6 +39,10 @@ handle the request) or a \link[httr2]{response} (if it does).
 
 \item{env}{Environment to use for scoping changes.}
 }
+\value{
+\code{\link[=with_mocked_connect_responses]{with_mocked_connect_responses()}} returns the result of evaluating
+\code{code}.
+}
 \description{
 These functions can be used to temporarily mock responses from the Connect
 server, which is useful for writing tests that verify the behaviour of
