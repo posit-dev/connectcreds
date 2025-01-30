@@ -6,7 +6,7 @@
 \alias{connectcreds-package}
 \title{connectcreds: Manage 'OAuth' Credentials from 'Posit Connect'}
 \description{
-A toolkit for making use of credentials mediated by 'Posit Connect'. It handles the details of communicating with Connect's API correctly, 'OAuth' token caching, and refresh behaviour.
+A toolkit for making use of credentials mediated by 'Posit Connect'. It handles the details of communicating with the Connect API correctly, 'OAuth' token caching, and refresh behaviour.
 }
 \seealso{
 Useful links:
