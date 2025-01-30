@@ -1,6 +1,6 @@
 Package: connectcreds
 Title: Manage 'OAuth' Credentials from 'Posit Connect'
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Aaron", "Jacobs", , "aaron.jacobs@posit.co",
            role = c("aut", "cre")),
