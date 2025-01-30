@@ -8,6 +8,14 @@
 \description{
 A toolkit for making use of credentials mediated by 'Posit Connect'. It handles the details of communicating with Connect's API correctly, 'OAuth' token caching, and refresh behaviour.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/posit-dev/connectcreds}
+  \item Report bugs at \url{https://github.com/posit-dev/connectcreds/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Aaron Jacobs \email{aaron.jacobs@posit.co}
 
