@@ -2,7 +2,7 @@
 #'
 #' These functions can be used to temporarily mock responses from the Connect
 #' server, which is useful for writing tests that verify the behaviour of
-#' viewer-based credentials.
+#' viewer-based or service account credentials.
 #'
 #' @param token When not `NULL`, return this token from the Connect server.
 #' @param error When `TRUE`, return an error from the Connect server.
@@ -12,6 +12,11 @@
 #' @examples
 #' with_mocked_connect_responses(
 #'   connect_viewer_token(),
+#'   token = "test"
+#' )
+#'
+#' with_mocked_connect_responses(
+#'   connect_service_account_token(),
 #'   token = "test"
 #' )
 #' @export
@@ -31,6 +36,7 @@ with_mocked_connect_responses <- function(
       RSTUDIO_PRODUCT = "CONNECT",
       CONNECT_SERVER = "localhost:3030",
       CONNECT_API_KEY = "key",
+      CONNECT_CONTENT_SESSION_TOKEN = "session-token",
       CONNECTCREDS_MOCKING = "1",
       .local_envir = env
     ),
@@ -55,6 +61,7 @@ local_mocked_connect_responses <- function(
     RSTUDIO_PRODUCT = "CONNECT",
     CONNECT_SERVER = "localhost:3030",
     CONNECT_API_KEY = "key",
+    CONNECT_CONTENT_SESSION_TOKEN = "session-token",
     CONNECTCREDS_MOCKING = "1",
     .local_envir = env
   )

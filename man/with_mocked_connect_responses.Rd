@@ -46,11 +46,16 @@ handle the request) or a \link[httr2]{response} (if it does).
 \description{
 These functions can be used to temporarily mock responses from the Connect
 server, which is useful for writing tests that verify the behaviour of
-viewer-based credentials.
+viewer-based or service account credentials.
 }
 \examples{
 with_mocked_connect_responses(
   connect_viewer_token(),
+  token = "test"
+)
+
+with_mocked_connect_responses(
+  connect_service_account_token(),
   token = "test"
 )
 }
