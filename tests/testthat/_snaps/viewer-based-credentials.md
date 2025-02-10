@@ -15,6 +15,22 @@
     Output
       [1] FALSE
 
+# connect_viewer_token() has nice errors when not on Connect
+
+    Code
+      connect_viewer_token()
+    Condition
+      Error in `connect_viewer_token()`:
+      ! Viewer-based credentials are only available when running on Connect.
+
+---
+
+    Code
+      connect_viewer_token()
+    Condition
+      Error in `connect_viewer_token()`:
+      ! Viewer-based credentials are only available in Shiny sessions.
+
 # missing viewer credentials generate errors on Connect
 
     Code

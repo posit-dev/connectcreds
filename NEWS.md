@@ -1,5 +1,8 @@
 # connectcreds (development version)
 
+* Error messages for misuse of `connect_viewer_token()` outside Connect have
+  improved.
+
 # connectcreds 0.1.0
 
 * Initial release. `connectcreds` is is a toolkit for making use of credentials

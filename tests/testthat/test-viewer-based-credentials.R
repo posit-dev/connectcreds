@@ -9,6 +9,12 @@ test_that("has_viewer_token() returns false when not on Connect", {
   expect_snapshot(has_viewer_token(session = session))
 })
 
+test_that("connect_viewer_token() has nice errors when not on Connect", {
+  expect_snapshot(connect_viewer_token(), error = TRUE)
+  local_mocked_bindings(running_on_connect = function() TRUE)
+  expect_snapshot(connect_viewer_token(), error = TRUE)
+})
+
 test_that("missing viewer credentials generate errors on Connect", {
   # Mock a Connect environment that *does not* support viewer-based credentials.
   local_mocked_bindings(
