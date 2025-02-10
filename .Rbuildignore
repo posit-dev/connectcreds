@@ -4,3 +4,4 @@
 ^\.github$
 ^connectcreds\.Rproj$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$
