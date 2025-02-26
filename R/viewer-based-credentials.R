@@ -205,8 +205,30 @@ check_shiny_session <- function(
   )
 }
 
+get_product <- function() {
+  posit_product <- Sys.getenv("POSIT_PRODUCT")
+  if (posit_product != "") {
+    return(posit_product)
+  }
+  Sys.getenv("RSTUDIO_PRODUCT")
+}
+
+# Returns `TRUE` if we're running locally (no product env var set),
+# else `FALSE`.
+is_local <- function() {
+  identical(get_product(), "")
+}
+
+# Returns `TRUE` if we're running on Connect as determined by the
+# `POSIT_PRODUCT` or `RSTUDIO_PRODUCT` env var, else `FALSE`.
 running_on_connect <- function() {
-  identical(Sys.getenv("RSTUDIO_PRODUCT"), "CONNECT")
+  identical(get_product(), "CONNECT")
+}
+
+# Returns `TRUE` if we're running on Workbench as determined by the
+# `POSIT_PRODUCT` or `RSTUDIO_PRODUCT` env var, else `FALSE`.
+running_on_workbench <- function() {
+  identical(get_product(), "WORKBENCH")
 }
 
 is_testing <- function() {

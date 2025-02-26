@@ -33,7 +33,7 @@ with_mocked_connect_responses <- function(
   mock <- mock %||% connect_mock_fn(token, error)
   withr::with_envvar(
     c(
-      RSTUDIO_PRODUCT = "CONNECT",
+      POSIT_PRODUCT = "CONNECT",
       CONNECT_SERVER = "localhost:3030",
       CONNECT_API_KEY = "key",
       CONNECT_CONTENT_SESSION_TOKEN = "session-token",
@@ -58,7 +58,7 @@ local_mocked_connect_responses <- function(
   check_exclusive(mock, token, error)
   mock <- mock %||% connect_mock_fn(token, error)
   withr::local_envvar(
-    RSTUDIO_PRODUCT = "CONNECT",
+    POSIT_PRODUCT = "CONNECT",
     CONNECT_SERVER = "localhost:3030",
     CONNECT_API_KEY = "key",
     CONNECT_CONTENT_SESSION_TOKEN = "session-token",

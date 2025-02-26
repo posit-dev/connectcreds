@@ -58,3 +58,42 @@ test_that("mock Connect responses work as expected", {
     }
   )
 })
+
+test_that("environment detection functions work", {
+  withr::with_envvar(c(POSIT_PRODUCT = "", RSTUDIO_PRODUCT = ""), {
+    expect_true(is_local())
+    expect_false(running_on_connect())
+    expect_false(running_on_workbench())
+  })
+  
+  withr::with_envvar(c(POSIT_PRODUCT = "CONNECT", RSTUDIO_PRODUCT = ""), {
+    expect_false(is_local())
+    expect_true(running_on_connect())
+    expect_false(running_on_workbench())
+  })
+  
+  withr::with_envvar(c(POSIT_PRODUCT = "WORKBENCH", RSTUDIO_PRODUCT = ""), {
+    expect_false(is_local())
+    expect_false(running_on_connect()) 
+    expect_true(running_on_workbench())
+  })
+  
+  withr::with_envvar(c(POSIT_PRODUCT = "", RSTUDIO_PRODUCT = "CONNECT"), {
+    expect_false(is_local())
+    expect_true(running_on_connect())
+    expect_false(running_on_workbench())
+  })
+  
+  withr::with_envvar(c(POSIT_PRODUCT = "", RSTUDIO_PRODUCT = "WORKBENCH"), {
+    expect_false(is_local())
+    expect_false(running_on_connect()) 
+    expect_true(running_on_workbench())
+  })
+
+  # POSIT_PRODUCT takes precedence over RSTUDIO_PRODUCT
+  withr::with_envvar(c(POSIT_PRODUCT = "CONNECT", RSTUDIO_PRODUCT = "WORKBENCH"), {
+    expect_false(is_local())
+    expect_true(running_on_connect())
+    expect_false(running_on_workbench())
+  })
+})
