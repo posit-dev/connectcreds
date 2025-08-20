@@ -91,9 +91,10 @@ connect_viewer_token <- function(
         c(
           "OAuth failure [invalid_request]",
           "*" = body$error_message,
-          i = if (body$error_code == 212)
+          i = if (body$error_code == 212) {
             "Learn more at \
           {.url https://docs.posit.co/connect/user/oauth-integrations/#adding-oauth-integrations-to-deployed-content}."
+          }
         ),
         call = NULL
       )
