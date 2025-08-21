@@ -5,3 +5,6 @@
 ^connectcreds\.Rproj$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^\.vscode$
+^\.claude$
+^CLAUDE\.md$
