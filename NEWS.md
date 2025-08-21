@@ -7,6 +7,9 @@
 * Error messages for misuse of `connect_viewer_token()` outside Connect have
   improved.
 
+* A new `as_azure_token()` function allows converting a token into a format
+  compatible with the AzureR ecosystem of packages (#4).
+
 # connectcreds 0.1.0
 
 * Initial release. `connectcreds` is is a toolkit for making use of credentials
