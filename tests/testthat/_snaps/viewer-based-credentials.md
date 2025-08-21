@@ -66,14 +66,9 @@
       [1] "localhost:3030/__api__/v1/oauth/integrations/credentials"
       
       $headers
-      $headers$Authorization
-      [1] "Key key"
-      
-      $headers$Accept
-      [1] "application/json"
-      
-      attr(,"redact")
-      [1] "Authorization"
+      <httr2_headers>
+      Authorization: <REDACTED>
+      Accept: application/json
       
       $body
       $body$grant_type
