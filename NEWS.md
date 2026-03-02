@@ -4,6 +4,9 @@
   functions allow looking up credentials from Connect-managed service accounts
   (or service principals).
 
+* New `connect_workload_token()` and `has_workload_token()` functions allow
+  manual retrieval of workload identity tokens on a Connect server.
+
 * Error messages for misuse of `connect_viewer_token()` outside Connect have
   improved.
 

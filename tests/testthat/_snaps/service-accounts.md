@@ -82,3 +82,80 @@
       ! Unexpected content type "text/plain".
       * Expecting type "application/json" or suffix "json".
 
+# connect_workload_token() has nice errors when not on Connect
+
+    Code
+      connect_workload_token(audience = "test")
+    Condition
+      Error in `connect_workload_token()`:
+      ! Workload identity tokens are only available when running on Connect.
+
+---
+
+    Code
+      connect_workload_token(audience = "test")
+    Condition
+      Error in `connect_workload_token()`:
+      ! Workload identity tokens are not supported by this version of Connect.
+
+# missing workload token credentials generate errors on Connect
+
+    Code
+      connect_workload_token(audience = "test")
+    Condition
+      Error in `connect_workload_token()`:
+      ! Workload identity tokens are not supported by this version of Connect.
+
+---
+
+    Code
+      has_workload_token(audience = "test")
+    Message
+      No workload identity token found.
+      Caused by error in `connect_workload_token()`:
+      ! Workload identity tokens are not supported by this version of Connect.
+    Output
+      [1] FALSE
+
+# workload token exchange requests to Connect look correct
+
+    Code
+      list(url = req$url, headers = req$headers, body = req$body$data)
+    Output
+      $url
+      [1] "localhost:3030/__api__/v1/oauth/integrations/credentials"
+      
+      $headers
+      <httr2_headers>
+      Authorization: <REDACTED>
+      Accept: application/json
+      
+      $body
+      $body$grant_type
+      [1] "urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange"
+      
+      $body$subject_token
+      [1] "session-token"
+      
+      $body$subject_token_type
+      [1] "urn%3Aposit%3Aconnect%3Acontent-session-token"
+      
+      $body$audience
+      [1] "test"
+      
+      $body$requested_token_type
+      [1] "urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token"
+      
+      
+
+# mock Connect responses work for workload tokens
+
+    Code
+      connect_workload_token(audience = "test")
+    Condition
+      Error in `connect_workload_token()`:
+      ! Cannot fetch workload identity token from the Connect server.
+      Caused by error:
+      ! Failed to parse response from `client$token_url` OAuth url.
+      * Did not contain `access_token`, `device_code`, or `error` field.
+

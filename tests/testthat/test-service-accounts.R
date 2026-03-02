@@ -47,3 +47,51 @@ test_that("mock Connect responses work as expected", {
     }
   )
 })
+
+test_that("has_workload_token() returns false when not on Connect", {
+  expect_false(has_workload_token(audience = "test"))
+})
+
+test_that("connect_workload_token() has nice errors when not on Connect", {
+  expect_snapshot(connect_workload_token(audience = "test"), error = TRUE)
+  local_mocked_bindings(running_on_connect = function() TRUE)
+  expect_snapshot(connect_workload_token(audience = "test"), error = TRUE)
+})
+
+test_that("missing workload token credentials generate errors on Connect", {
+  # Mock a Connect environment that *does not* support workload identity tokens.
+  local_mocked_bindings(running_on_connect = function() TRUE)
+  expect_false(has_workload_token(audience = "test"))
+  expect_snapshot(connect_workload_token(audience = "test"), error = TRUE)
+  local_options(connectcreds_debug = TRUE)
+  expect_snapshot(has_workload_token(audience = "test"))
+})
+
+test_that("workload token exchange requests to Connect look correct", {
+  local_mocked_connect_responses(function(req) {
+    # Snapshot relevant fields of the outgoing request.
+    expect_snapshot(
+      list(url = req$url, headers = req$headers, body = req$body$data)
+    )
+    response_json(body = list(access_token = "token"))
+  })
+  expect_equal(
+    connect_workload_token(audience = "test")$access_token,
+    "token"
+  )
+})
+
+test_that("mock Connect responses work for workload tokens", {
+  with_mocked_connect_responses(
+    expect_equal(
+      connect_workload_token(audience = "test")$access_token,
+      "test"
+    ),
+    token = "test"
+  )
+
+  with_mocked_connect_responses(
+    expect_snapshot(connect_workload_token(audience = "test"), error = TRUE),
+    error = TRUE
+  )
+})
