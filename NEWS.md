@@ -1,4 +1,4 @@
-# connectcreds (development version)
+# connectcreds 0.2.0
 
 * New `connect_service_account_token()` and `has_service_account_token()`
   functions allow looking up credentials from Connect-managed service accounts
