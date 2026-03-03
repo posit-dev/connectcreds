@@ -194,7 +194,7 @@ check_shiny_session <- function(
   arg = caller_arg(x),
   call = caller_env()
 ) {
-  if (!missing(x) && inherits(x, "ShinySession")) {
+  if (!missing(x) && inherits(x, c("ShinySession", "session_proxy"))) {
     return(invisible(x))
   }
   stop_input_type(
