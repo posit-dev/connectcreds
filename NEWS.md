@@ -1,5 +1,8 @@
 # connectcreds (development version)
 
+* `connect_viewer_token()` and `has_viewer_token()` can now be used inside Shiny
+  modules (#6).
+
 # connectcreds 0.2.0
 
 * New `connect_service_account_token()` and `has_service_account_token()`
