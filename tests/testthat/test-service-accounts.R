@@ -58,6 +58,16 @@ test_that("session token from file is preferred over env var", {
   expect_equal(content_session_token(), "token-from-file")
 })
 
+test_that("session token falls back to env var when file is empty", {
+  token_file <- withr::local_tempfile()
+  file.create(token_file)
+  withr::local_envvar(
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = token_file,
+    CONNECT_CONTENT_SESSION_TOKEN = "token-from-envvar"
+  )
+  expect_equal(content_session_token(), "token-from-envvar")
+})
+
 test_that("session token falls back to env var when file is missing", {
   withr::local_envvar(
     CONNECT_CONTENT_SESSION_TOKEN_FILE = "/nonexistent/path/to/token",

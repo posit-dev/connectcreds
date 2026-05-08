@@ -184,7 +184,10 @@ has_workload_token <- function(...) {
 content_session_token <- function() {
   token_file <- Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN_FILE")
   if (nzchar(token_file) && file.exists(token_file)) {
-    return(readLines(token_file, n = 1, warn = FALSE))
+    token <- readLines(token_file, n = 1, warn = FALSE)
+    if (length(token) >= 1 && nzchar(token[[1]])) {
+      return(token[[1]])
+    }
   }
   Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN")
 }
