@@ -37,6 +37,7 @@ with_mocked_connect_responses <- function(
       CONNECT_SERVER = "localhost:3030",
       CONNECT_API_KEY = "key",
       CONNECT_CONTENT_SESSION_TOKEN = "session-token",
+      CONNECT_CONTENT_SESSION_TOKEN_FILE = NA,
       CONNECTCREDS_MOCKING = "1",
       .local_envir = env
     ),
@@ -62,6 +63,7 @@ local_mocked_connect_responses <- function(
     CONNECT_SERVER = "localhost:3030",
     CONNECT_API_KEY = "key",
     CONNECT_CONTENT_SESSION_TOKEN = "session-token",
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = NA,
     CONNECTCREDS_MOCKING = "1",
     .local_envir = env
   )

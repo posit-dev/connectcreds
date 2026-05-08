@@ -9,8 +9,11 @@
 #' @inheritParams httr2::oauth_flow_token_exchange
 #' @inheritParams connect_viewer_token
 #' @param content_token A token that uniquely identifies this content session.
-#'   Defaults to the value of the `CONNECT_CONTENT_SESSION_TOKEN` environment
-#'   variable, which is set automatically when running on Connect.
+#'   Defaults to the value found in the file indicated by the
+#'   `CONNECT_CONTENT_SESSION_TOKEN_FILE` environment variable on Connect
+#'   2026.02.0 and later, or the value of the `CONNECT_CONTENT_SESSION_TOKEN`
+#'   environment variable on earlier versions. These are set automatically when
+#'   running on Connect.
 #' @returns [connect_service_account_token()] returns an [httr2::oauth_token].
 #' @examples
 #' token <- "default-token"
@@ -21,7 +24,7 @@
 connect_service_account_token <- function(
   resource = NULL,
   scope = NULL,
-  content_token = Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN"),
+  content_token = content_session_token(),
   server_url = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
 ) {
@@ -105,7 +108,7 @@ has_service_account_token <- function(...) {
 #' @export
 connect_workload_token <- function(
   ...,
-  content_token = Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN"),
+  content_token = content_session_token(),
   server_url = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
 ) {
@@ -168,4 +171,20 @@ has_workload_token <- function(...) {
       FALSE
     }
   )
+}
+
+#' Look up the content session token.
+#'
+#' Prefer reading from the file pointed to by the
+#' `CONNECT_CONTENT_SESSION_TOKEN_FILE` environment variable, since long-running
+#' processes need to be able to pick up a refreshed token. Fall back to the
+#' `CONNECT_CONTENT_SESSION_TOKEN` environment variable for older versions of
+#' Connect that don't supply a token file.
+#' @noRd
+content_session_token <- function() {
+  token_file <- Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN_FILE")
+  if (nzchar(token_file) && file.exists(token_file)) {
+    return(readLines(token_file, n = 1, warn = FALSE))
+  }
+  Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN")
 }

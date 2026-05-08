@@ -48,6 +48,65 @@ test_that("mock Connect responses work as expected", {
   )
 })
 
+test_that("session token from file is preferred over env var", {
+  token_file <- withr::local_tempfile()
+  writeLines("token-from-file", token_file)
+  withr::local_envvar(
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = token_file,
+    CONNECT_CONTENT_SESSION_TOKEN = "token-from-envvar"
+  )
+  expect_equal(content_session_token(), "token-from-file")
+})
+
+test_that("session token falls back to env var when file is missing", {
+  withr::local_envvar(
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = "/nonexistent/path/to/token",
+    CONNECT_CONTENT_SESSION_TOKEN = "token-from-envvar"
+  )
+  expect_equal(content_session_token(), "token-from-envvar")
+})
+
+test_that("session token falls back to env var when file env is unset", {
+  withr::local_envvar(
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = NA,
+    CONNECT_CONTENT_SESSION_TOKEN = "token-from-envvar"
+  )
+  expect_equal(content_session_token(), "token-from-envvar")
+})
+
+test_that("session token is empty when neither source is available", {
+  withr::local_envvar(
+    CONNECT_CONTENT_SESSION_TOKEN_FILE = NA,
+    CONNECT_CONTENT_SESSION_TOKEN = NA
+  )
+  expect_equal(content_session_token(), "")
+})
+
+test_that("connect_service_account_token() reads token from file", {
+  local_mocked_connect_responses(function(req) {
+    expect_equal(as.character(req$body$data$subject_token), "token-from-file")
+    response_json(body = list(access_token = "exchanged"))
+  })
+  token_file <- withr::local_tempfile()
+  writeLines("token-from-file", token_file)
+  withr::local_envvar(CONNECT_CONTENT_SESSION_TOKEN_FILE = token_file)
+  expect_equal(connect_service_account_token()$access_token, "exchanged")
+})
+
+test_that("connect_workload_token() reads token from file", {
+  local_mocked_connect_responses(function(req) {
+    expect_equal(as.character(req$body$data$subject_token), "token-from-file")
+    response_json(body = list(access_token = "exchanged"))
+  })
+  token_file <- withr::local_tempfile()
+  writeLines("token-from-file", token_file)
+  withr::local_envvar(CONNECT_CONTENT_SESSION_TOKEN_FILE = token_file)
+  expect_equal(
+    connect_workload_token(audience = "test")$access_token,
+    "exchanged"
+  )
+})
+
 test_that("has_workload_token() returns false when not on Connect", {
   expect_false(has_workload_token(audience = "test"))
 })
