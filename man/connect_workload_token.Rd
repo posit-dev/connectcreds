@@ -20,7 +20,7 @@ has_workload_token(...)
 \item{content_token}{A token that uniquely identifies this content session.
 Defaults to the value found in the file indicated by the
 \code{CONNECT_CONTENT_SESSION_TOKEN_FILE} environment variable on Connect
-2026.02.0 and later, or the value of the \code{CONNECT_CONTENT_SESSION_TOKEN}
+2026.05.0 and later, or the value of the \code{CONNECT_CONTENT_SESSION_TOKEN}
 environment variable on earlier versions. These are set automatically when
 running on Connect.}
 

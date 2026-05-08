@@ -4,7 +4,7 @@
   to read the content session token from the file pointed to by the
   `CONNECT_CONTENT_SESSION_TOKEN_FILE` environment variable, falling back to
   the `CONNECT_CONTENT_SESSION_TOKEN` environment variable. This helps
-  long-running processes maintain fresh credentials on Connect 2026.02.0 and
+  long-running processes maintain fresh credentials on Connect 2026.05.0 and
   later (#10).
 
 # connectcreds 0.2.0
