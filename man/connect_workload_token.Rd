@@ -7,7 +7,7 @@
 \usage{
 connect_workload_token(
   ...,
-  content_token = Sys.getenv("CONNECT_CONTENT_SESSION_TOKEN"),
+  content_token = content_session_token(),
   server_url = Sys.getenv("CONNECT_SERVER"),
   api_key = Sys.getenv("CONNECT_API_KEY")
 )
@@ -18,8 +18,11 @@ has_workload_token(...)
 \item{...}{Further arguments passed on to \code{\link[=connect_workload_token]{connect_workload_token()}}.}
 
 \item{content_token}{A token that uniquely identifies this content session.
-Defaults to the value of the \code{CONNECT_CONTENT_SESSION_TOKEN} environment
-variable, which is set automatically when running on Connect.}
+Defaults to the value found in the file indicated by the
+\code{CONNECT_CONTENT_SESSION_TOKEN_FILE} environment variable on Connect
+2026.05.0 and later, or the value of the \code{CONNECT_CONTENT_SESSION_TOKEN}
+environment variable on earlier versions. These are set automatically when
+running on Connect.}
 
 \item{server_url}{The Connect server to exchange credentials with. Defaults
 to the value of the \code{CONNECT_SERVER} environment variable, which is set
