@@ -13,8 +13,10 @@ License: MIT + file LICENSE
 Imports:
     cli,
     httr2 (>= 1.1.0),
+    R6,
     rlang (>= 1.1.0)
 Suggests:
+    AzureAuth,
     testthat (>= 3.0.0),
     withr
 Encoding: UTF-8
